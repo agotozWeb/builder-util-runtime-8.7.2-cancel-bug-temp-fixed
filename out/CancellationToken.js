@@ -1,5 +1,4 @@
 "use strict";
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -72,7 +71,7 @@ class CancellationToken extends _events().EventEmitter {
     let cancelHandler = null;
     return new Promise((resolve, reject) => {
       let addedCancelHandler = null;
-
+  
       cancelHandler = () => {
         try {
           if (addedCancelHandler != null) {

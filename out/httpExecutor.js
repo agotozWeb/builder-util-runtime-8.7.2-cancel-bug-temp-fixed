@@ -275,7 +275,7 @@ Please double check that your authentication token is correct. Due to security r
   }
 
   doDownload(requestOptions, options, redirectCount) {
-    const request = this.createRequest(requestOptions, response => {
+     const request = this.createRequest(requestOptions, response => {
       if (response.statusCode >= 400) {
         options.callback(new Error(`Cannot download "${requestOptions.protocol || "https:"}//${requestOptions.hostname}${requestOptions.path}", status ${response.statusCode}: ${response.statusMessage}`));
         return;
@@ -437,7 +437,7 @@ function safeGetHeader(response, headerKey) {
     return value;
   }
 }
-
+// TODO:11
 function configurePipes(options, response) {
   if (!checkSha2(safeGetHeader(response, "X-Checksum-Sha2"), options.options.sha2, options.callback)) {
     return;
@@ -467,12 +467,19 @@ function configurePipes(options, response) {
 
   for (const stream of streams) {
     stream.on("error", error => {
+      if(error.message === 'cancelled') {
+        fileOut.close()
+      }
       if (!options.options.cancellationToken.cancelled) {
         options.callback(error);
       }
     });
     lastStream = lastStream.pipe(stream);
   }
+
+  fileOut.on("error", (error) => {
+    fileOut.close();
+  })
 
   fileOut.on("finish", () => {
     fileOut.close(options.callback);
